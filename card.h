@@ -7,3 +7,9 @@ class Card {
     Phases phase;
 
 };
+
+class Deck {
+
+    Card* stack;
+
+};
