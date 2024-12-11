@@ -1,3 +1,5 @@
+#ifndef __PLAYER_H_INCLUDED__
+#define __PLAYER_H_INCLUDED__
 
 
 
@@ -13,3 +15,6 @@ class Human: Player {
 class AI: Player {
 
 };
+
+
+#endif

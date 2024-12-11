@@ -1,12 +1,18 @@
 #include <algorithm>
 #include <chrono>
 #include <random>
+#include <iostream>
 
 #include "card.h"
 
 Card::Card(): id{-1}, phase{new_moon} {}
 
 Card::Card(int id, Phases phase): id{id}, phase{phase} {}
+
+void Card::printCard() {
+    std::string names[8] = {"New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbeous", "Full Moon", "Waning Gibbeous", "Last Quarter", "Waning Crescent"};
+    std::cout << names[phase] << std::endl;
+}
 
 Deck::Deck(): id{-1} {
     // Default deck size of 4 copies of each
@@ -28,14 +34,21 @@ Deck::Deck(int id, int copies): id{id} {
 void Deck::shuffle() {
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 
-    shuffle(this->deck.front(), this->deck.back(), std::default_random_engine(seed));
+    std::shuffle(this->deck.front(), this->deck.back(), std::default_random_engine(seed));
 
 }
 
 Card* Deck::deal() {
     Card* top = this->deck.front();
-    this->deck.pop();
-    return top;
+    if(top) {
+        this->deck.pop();
+        return top;
+    }
+    else {
+        std::cerr << "Empty Deck" << std::endl;
+        return nullptr;
+    }
+    
 }
 
 Deck::~Deck() {

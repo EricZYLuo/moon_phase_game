@@ -1,3 +1,6 @@
+#ifndef __CARD_H_INCLUDED__
+#define __CARD_H_INCLUDED__
+
 #include <string>
 #include <queue>
 
@@ -10,6 +13,8 @@ class Card {
 public:
     Card();
     Card(int id, Phases phase);
+    // Temp for console output, eventually implement/replace drawCard
+    void printCard();
 
 
 };
@@ -18,12 +23,15 @@ class Deck {
     int id;
     std::queue<Card*> deck;
 
-    void shuffle();
-
+    
 public:
     Deck();
     Deck(int id, int copies);
     Card* deal();
+    void shuffle();
     ~Deck();
 
 };
+
+
+#endif

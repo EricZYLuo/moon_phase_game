@@ -1,3 +1,7 @@
+#ifndef __MAP_H_INCLUDED__
+#define __MAP_H_INCLUDED__
+
+
 #include <cstdlib>
 #include <vector>
 #include <iostream>
@@ -27,3 +31,4 @@ public:
 
 };
 
+#endif
