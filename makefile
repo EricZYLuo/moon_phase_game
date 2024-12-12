@@ -17,4 +17,5 @@ player.o: player.h
 card.o: card.h
 
 
-clean: $(RM) main
+clean: 
+	rm -f main *.o
