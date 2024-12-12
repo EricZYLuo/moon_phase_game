@@ -6,28 +6,32 @@
 int main() {
 
     Deck* test_deck = new Deck(1,1);
-    Card* draw = nullptr;
+    Card* draw = test_deck->deal();
 
-    do {
 
-        draw = test_deck->deal();
+    while(draw) {
         draw->printCard();
-
-    } while(draw);
+        delete draw;
+        draw = test_deck->deal();
+    }
 
     std::cout << std::endl << "BREAK" << std::endl << std::endl;
 
     delete test_deck;
 
-    test_deck = new Deck(2, 4);
+    test_deck = new Deck();
     test_deck->shuffle();
 
-    do {
+    draw = test_deck->deal();
 
-        draw = test_deck->deal();
+    while(draw) {
+
         draw->printCard();
+        delete draw;
+        draw = test_deck->deal();
+    }
 
-    } while(draw);
+    delete test_deck;
 
     return 0;
 }

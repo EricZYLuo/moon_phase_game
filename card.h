@@ -2,7 +2,7 @@
 #define __CARD_H_INCLUDED__
 
 #include <string>
-#include <queue>
+#include <vector>
 
 enum Phases {new_moon = 0, waxing_crescent = 1, first_quarter = 2, waxing_gibbeous = 3, full_moon = 4, waning_gibbeous = 5, last_quarter = 6, waning_crescent = 7};
 
@@ -21,7 +21,7 @@ public:
 
 class Deck {
     int id;
-    std::queue<Card*> deck;
+    std::vector<Card*> deck;
 
     
 public:

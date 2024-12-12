@@ -8,6 +8,17 @@
 
 #include "card.h"
 
+class Tile {
+
+    int id;
+    Card* filled;
+    int owned;
+
+public:
+    Tile(int id);
+
+};
+
 class Map {
 
     int id;
@@ -20,15 +31,6 @@ public:
 
 };
 
-class Tile {
 
-    int id;
-    Card* filled;
-    int owned;
-
-public:
-    Tile(int id);
-
-};
 
 #endif
