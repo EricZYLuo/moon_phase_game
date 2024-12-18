@@ -5,10 +5,12 @@
 #include <vector>
 
 #include "map.h"
+#include "card.h"
 
 class Game {
     int id;
     Map* game_board;
+    Deck* deck;
 };
 
 #endif

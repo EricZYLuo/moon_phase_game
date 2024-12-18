@@ -16,6 +16,10 @@ class Tile {
 
 public:
     Tile(int id);
+    void setCard(Card* card, int player);
+    void setPlayer(int player);
+    bool isFilled();
+    ~Tile();
 
 };
 
@@ -28,7 +32,7 @@ class Map {
 
 public:
     Map(int id, int size, std::vector<std::pair<int, int>> connections);
-
+    ~Map();
 };
 
 
