@@ -13,6 +13,7 @@ class Card {
 public:
     Card();
     Card(int id, Phases phase);
+    Phases getPhase();
     // Temp for console output, eventually implement/replace drawCard
     void printCard();
 

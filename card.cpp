@@ -9,6 +9,10 @@ Card::Card(): id{-1}, phase{new_moon} {}
 
 Card::Card(int id, Phases phase): id{id}, phase{phase} {}
 
+Phases Card::getPhase() {
+    return this->phase;
+}
+
 void Card::printCard() {
     std::string names[8] = {"New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbeous", "Full Moon", "Waning Gibbeous", "Last Quarter", "Waning Crescent"};
     std::cout << names[this->phase] << std::endl;

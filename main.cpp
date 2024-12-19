@@ -33,5 +33,13 @@ int main() {
 
     delete test_deck;
 
+    int test_num;
+
+    std::cin >> test_num;
+
+    std::vector<int>* test_arr = new std::vector<int>[test_num];
+
+    delete [] test_arr;
+
     return 0;
 }
