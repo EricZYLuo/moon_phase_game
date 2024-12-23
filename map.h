@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <vector>
 #include <iostream>
+#include <deque>
 
 #include "card.h"
 
@@ -37,6 +38,19 @@ public:
     ~Map();
 };
 
+class Path {
+
+    Tile* start;
+    Tile* end;
+    std::deque<int> tiles;
+    int length;
+    
+public:
+    Path(Tile* start, Tile* end);
+    void addToStart(Tile* tile);
+    void addToEnd(Tile* tile);
+    ~Path();
+};
 
 
 #endif
