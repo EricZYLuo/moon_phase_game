@@ -20,6 +20,10 @@ bool Tile::isFilled() {
     return this->filled != nullptr;
 }
 
+int Tile::getId() {
+    return this->id;
+}
+
 Phases Tile::getCard() {
     return this->filled->getPhase();
 }
@@ -43,12 +47,18 @@ Map::Map(int id, int size, std::vector<std::pair<int, int>> connections): id{id}
 
 }
 
+
+void Map::pathCheck(Path basePath, std::vector<Path>& pathList) {
+
+}
+
 int Map::checkAdjacent(int tile_id, int player_id) {
     if(this->tiles[tile_id] == nullptr) {
         std::cerr << "Tried to check empty tile." << std::endl;
         return -1;
     }
     
+    std::vector<Path> pathes;
     int score = 0;
 
     for(auto & edge: connections.at(tile_id)) {
@@ -68,7 +78,13 @@ int Map::checkAdjacent(int tile_id, int player_id) {
             }
 
             // Check for chains
-            // TODO
+            if((std::abs(this->tiles[edge.first]->getCard() - this->tiles[edge.second]->getCard()) == 1) || (std::abs(this->tiles[edge.first]->getCard() - this->tiles[edge.second]->getCard()) == 7)) {
+                // TODO
+                Tile* first = this->tiles[edge.first];
+                Tile* second = this->tiles[edge.second];
+                Path initPath(first->getId(), second->getId());
+            }
+            
         }
         
 
@@ -87,3 +103,22 @@ Map::~Map() {
     }
     delete [] this->tiles;
 }
+
+Path::Path(int start, int end): start{start}, end{end}, tiles{std::deque<int>()} {
+    tiles.emplace_front(start);
+    tiles.emplace_back(end);
+}
+
+Path::Path(const Path& other): start{other.start}, end{other.end}, tiles{std::deque<int>(other.tiles)} {}
+
+void Path::addToStart(int tile) {
+    tiles.emplace_front(tile);
+    start = tile;
+}
+
+void Path::addToEnd(int tile) {
+    tiles.emplace_back(tile);
+    end = tile;
+}
+
+Path::~Path() {}

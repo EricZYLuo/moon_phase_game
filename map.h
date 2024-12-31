@@ -20,6 +20,7 @@ public:
     void setCard(Card* card, int player);
     void setPlayer(int player);
     bool isFilled();
+    int getId();
     Phases getCard();
     ~Tile();
 
@@ -32,6 +33,8 @@ class Map {
     Tile** tiles;
     std::vector<std::vector<std::pair<int, int>>> connections; 
 
+    void pathCheck(Path basePath, std::vector<Path>& pathList);
+
 public:
     Map(int id, int size, std::vector<std::pair<int, int>> connections);
     int checkAdjacent(int tile_id, int player_id);
@@ -40,15 +43,16 @@ public:
 
 class Path {
 
-    Tile* start;
-    Tile* end;
+    int start;
+    int end;
     std::deque<int> tiles;
     int length;
     
 public:
-    Path(Tile* start, Tile* end);
-    void addToStart(Tile* tile);
-    void addToEnd(Tile* tile);
+    Path(int start, int end);
+    Path(const Path& other);
+    void addToStart(int tile);
+    void addToEnd(int tile);
     ~Path();
 };
 
