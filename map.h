@@ -33,7 +33,7 @@ class Map {
     Tile** tiles;
     std::vector<std::vector<std::pair<int, int>>> connections; 
 
-    void pathCheck(Path basePath, std::vector<Path>& pathList);
+    void pathCheck(Path basePath, std::vector<Path>& pathList, int direction);
 
 public:
     Map(int id, int size, std::vector<std::pair<int, int>> connections);
@@ -53,6 +53,10 @@ public:
     Path(const Path& other);
     void addToStart(int tile);
     void addToEnd(int tile);
+    int getStart();
+    int getEnd();
+    int getLength();
+    const std::deque<int>& getTiles();
     ~Path();
 };
 

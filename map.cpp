@@ -1,5 +1,7 @@
 #include "map.h"
 
+#include <algorithm>
+
 Tile::Tile(int id): id{id}, filled{nullptr}, owned{0} {}
 
 void Tile::setCard(Card* card, int player) {
@@ -48,7 +50,45 @@ Map::Map(int id, int size, std::vector<std::pair<int, int>> connections): id{id}
 }
 
 
-void Map::pathCheck(Path basePath, std::vector<Path>& pathList) {
+void Map::pathCheck(Path basePath, std::vector<Path>& pathList, int direction) {
+    bool added = false;
+    // Check end of path for continuations
+    for(auto edge: this->connections.at(basePath.getEnd())) {
+        //Check if tile continues the chain
+        if((this->tiles[edge.first]->getCard() + direction) % 8 == this->tiles[edge.second]->getCard()) {
+            //Makes sure tile is not already in path (cycle) 
+            if(std::find(basePath.getTiles().begin(), basePath.getTiles().end(), this->tiles[edge.second]->getId()) == basePath.getTiles().end()) {
+                // Make a copy of the path and add to it, possibility for multiple paths to be made
+                Path newPath(basePath);
+                newPath.addToEnd(this->tiles[edge.second]->getId());
+                added = true;
+                pathCheck(newPath, pathList, direction);
+            }
+        }
+    }
+
+    // Check start of path for continuations, ONLY do this if no path has yet been added, ie. no connecting tile to the end forms a chain
+    if(!added) {
+        for(auto edge: this->connections.at(basePath.getStart())) {
+            //Check if tile continues the chain
+            if((this->tiles[edge.first]->getCard() - direction) % 8 == this->tiles[edge.second]->getCard()) {
+                //Makes sure tile is not already in path (cycle) 
+                if(std::find(basePath.getTiles().begin(), basePath.getTiles().end(), this->tiles[edge.second]->getId()) == basePath.getTiles().end()) {
+                    // Make a copy of the path and add to it, possibility for multiple paths to be made
+                    Path newPath(basePath);
+                    newPath.addToStart(this->tiles[edge.second]->getId());
+                    added = true;
+                    pathCheck(newPath, pathList, direction);
+                }
+            }
+        }   
+    }
+
+    // If still no paths are added, if the path is longer than 3, add it to the list
+    if(!added && basePath.getLength() >= 3) {
+        pathList.emplace_back(basePath);
+    }
+
 
 }
 
@@ -58,10 +98,10 @@ int Map::checkAdjacent(int tile_id, int player_id) {
         return -1;
     }
     
-    std::vector<Path> pathes;
+    std::vector<Path> paths;
     int score = 0;
 
-    for(auto & edge: connections.at(tile_id)) {
+    for(auto & edge: this->connections.at(tile_id)) {
         
         if(this->tiles[edge.second] != nullptr) {
             // Check for pair tiles
@@ -78,11 +118,27 @@ int Map::checkAdjacent(int tile_id, int player_id) {
             }
 
             // Check for chains
-            if((std::abs(this->tiles[edge.first]->getCard() - this->tiles[edge.second]->getCard()) == 1) || (std::abs(this->tiles[edge.first]->getCard() - this->tiles[edge.second]->getCard()) == 7)) {
-                // TODO
+            if(((this->tiles[edge.first]->getCard() + 1) % 8 == this->tiles[edge.second]->getCard()) || ((this->tiles[edge.first]->getCard() - 1) % 8 == this->tiles[edge.second]->getCard())) {
+                
+                // Set up initial path object
                 Tile* first = this->tiles[edge.first];
                 Tile* second = this->tiles[edge.second];
+                int direction;
                 Path initPath(first->getId(), second->getId());
+                // Determine direction of chain (increasing/decreasing)
+                if(first->getCard() + 1 % 8 == second->getCard()) {
+                    direction = 1;
+                }
+                else {
+                    direction = -1;
+                }
+                // Call recursive function that adds all valid paths created to a vector
+                pathCheck(initPath, paths, direction);
+                // Iterate through vector to add score equal to length of each path
+                for(auto & path: paths) {
+                    score += path.getLength();
+                }
+
             }
             
         }
@@ -119,6 +175,22 @@ void Path::addToStart(int tile) {
 void Path::addToEnd(int tile) {
     tiles.emplace_back(tile);
     end = tile;
+}
+
+int Path::getStart() {
+    return this->start;
+}
+
+int Path::getEnd() {
+    return this->end;
+}
+
+int Path::getLength() {
+    return this->length;
+}
+
+const std::deque<int>& Path::getTiles() {
+    return this->tiles;
 }
 
 Path::~Path() {}
