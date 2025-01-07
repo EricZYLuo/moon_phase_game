@@ -26,21 +26,6 @@ public:
 
 };
 
-class Map {
-
-    int id;
-    int size;
-    Tile** tiles;
-    std::vector<std::vector<std::pair<int, int>>> connections; 
-
-    void pathCheck(Path basePath, std::vector<Path>& pathList, int direction);
-
-public:
-    Map(int id, int size, std::vector<std::pair<int, int>> connections);
-    int checkAdjacent(int tile_id, int player_id);
-    ~Map();
-};
-
 class Path {
 
     int start;
@@ -59,6 +44,27 @@ public:
     const std::deque<int>& getTiles();
     ~Path();
 };
+
+class Map {
+
+    int id;
+    int size;
+    Tile** tiles;
+    std::vector<std::vector<std::pair<int, int>>> connections; 
+
+    void pathCheck(Path basePath, std::vector<Path>& pathList, int direction);
+
+public:
+    Map(int id, int size, const std::vector<std::pair<int, int>>& connections);
+    int checkAdjacent(int tile_id, int player_id);
+    bool mapFilled();
+    void placeCard(int tileLoc, Card* card, int player);
+    // Temp for debugging
+    void logMap();
+    ~Map();
+};
+
+
 
 
 #endif

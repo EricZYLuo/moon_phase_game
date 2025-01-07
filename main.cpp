@@ -1,11 +1,17 @@
 #include <iostream>
 
 #include "card.h"
+#include "map.h"
 
 
 int main() {
 
-    Deck* test_deck = new Deck(1,1);
+
+    /*
+
+    *** Deck and Card Testing ***
+
+    Deck* test_deck = new Deck{1,1};
     Card* draw = test_deck->deal();
 
 
@@ -32,14 +38,16 @@ int main() {
     }
 
     delete test_deck;
+    */
 
-    int test_num;
+   /*
+   ***Testing Map***
+   */
+    std::vector<std::pair<int, int> > connections{std::pair{0,1}, std::pair{0,2}, std::pair{1,3}, std::pair{2,3}};
 
-    std::cin >> test_num;
-
-    std::vector<int>* test_arr = new std::vector<int>[test_num];
-
-    delete [] test_arr;
+    Map mymap{0, 4, connections}; 
+    
+    
 
     return 0;
 }

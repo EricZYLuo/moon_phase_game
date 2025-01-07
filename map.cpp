@@ -27,7 +27,14 @@ int Tile::getId() {
 }
 
 Phases Tile::getCard() {
-    return this->filled->getPhase();
+    if(this->filled) {
+        return this->filled->getPhase();
+    }
+    else {
+        std::cerr << "Attempted to get card of unfilled tile" << std::endl;
+        return Phases::new_moon;
+    }
+    
 }
 
 Tile::~Tile() {
@@ -36,7 +43,7 @@ Tile::~Tile() {
     }
 }
 
-Map::Map(int id, int size, std::vector<std::pair<int, int>> connections): id{id}, size{size}, tiles{new Tile*[size]}, connections{std::vector<std::vector<std::pair<int,int>>>(size)} {
+Map::Map(int id, int size, const std::vector<std::pair<int, int>>& connections): id{id}, size{size}, tiles{new Tile*[size]}, connections{std::vector<std::vector<std::pair<int,int>>>(size)} {
 
     for(int i = 0; i < size; ++i) {
         this->tiles[i] = new Tile(i);
@@ -44,7 +51,7 @@ Map::Map(int id, int size, std::vector<std::pair<int, int>> connections): id{id}
 
     for(auto & edge: connections) {
         this->connections.at(edge.first).emplace_back(edge);
-        this->connections.at(edge.second).emplace_back(edge);
+        this->connections.at(edge.second).emplace_back(std::pair<int, int>(edge.second,edge.first));
     }
 
 }
@@ -54,33 +61,40 @@ void Map::pathCheck(Path basePath, std::vector<Path>& pathList, int direction) {
     bool added = false;
     // Check end of path for continuations
     for(auto edge: this->connections.at(basePath.getEnd())) {
-        //Check if tile continues the chain
-        if((this->tiles[edge.first]->getCard() + direction) % 8 == this->tiles[edge.second]->getCard()) {
-            //Makes sure tile is not already in path (cycle) 
-            if(std::find(basePath.getTiles().begin(), basePath.getTiles().end(), this->tiles[edge.second]->getId()) == basePath.getTiles().end()) {
-                // Make a copy of the path and add to it, possibility for multiple paths to be made
-                Path newPath(basePath);
-                newPath.addToEnd(this->tiles[edge.second]->getId());
-                added = true;
-                pathCheck(newPath, pathList, direction);
+        // Check for empty tiles
+        if(this->tiles[edge.second]->isFilled()) {
+            //Check if tile continues the chain
+            if((this->tiles[edge.first]->getCard() + direction) % 8 == this->tiles[edge.second]->getCard()) {
+                //Makes sure tile is not already in path (cycle) 
+                if(std::find(basePath.getTiles().begin(), basePath.getTiles().end(), this->tiles[edge.second]->getId()) == basePath.getTiles().end()) {
+                    // Make a copy of the path and add to it, possibility for multiple paths to be made
+                    Path newPath(basePath);
+                    newPath.addToEnd(this->tiles[edge.second]->getId());
+                    added = true;
+                    pathCheck(newPath, pathList, direction);
+                }
             }
         }
+        
     }
 
     // Check start of path for continuations, ONLY do this if no path has yet been added, ie. no connecting tile to the end forms a chain
     if(!added) {
         for(auto edge: this->connections.at(basePath.getStart())) {
-            //Check if tile continues the chain
-            if((this->tiles[edge.first]->getCard() - direction) % 8 == this->tiles[edge.second]->getCard()) {
-                //Makes sure tile is not already in path (cycle) 
-                if(std::find(basePath.getTiles().begin(), basePath.getTiles().end(), this->tiles[edge.second]->getId()) == basePath.getTiles().end()) {
-                    // Make a copy of the path and add to it, possibility for multiple paths to be made
-                    Path newPath(basePath);
-                    newPath.addToStart(this->tiles[edge.second]->getId());
-                    added = true;
-                    pathCheck(newPath, pathList, direction);
+            if(this->tiles[edge.second]->isFilled()) {
+                //Check if tile continues the chain
+                if((this->tiles[edge.first]->getCard() - direction) % 8 == this->tiles[edge.second]->getCard()) {
+                    //Makes sure tile is not already in path (cycle) 
+                    if(std::find(basePath.getTiles().begin(), basePath.getTiles().end(), this->tiles[edge.second]->getId()) == basePath.getTiles().end()) {
+                        // Make a copy of the path and add to it, possibility for multiple paths to be made
+                        Path newPath(basePath);
+                        newPath.addToStart(this->tiles[edge.second]->getId());
+                        added = true;
+                        pathCheck(newPath, pathList, direction);
+                    }
                 }
             }
+            
         }   
     }
 
@@ -93,7 +107,7 @@ void Map::pathCheck(Path basePath, std::vector<Path>& pathList, int direction) {
 }
 
 int Map::checkAdjacent(int tile_id, int player_id) {
-    if(this->tiles[tile_id] == nullptr) {
+    if(this->tiles[tile_id]->isFilled()) {
         std::cerr << "Tried to check empty tile." << std::endl;
         return -1;
     }
@@ -103,7 +117,7 @@ int Map::checkAdjacent(int tile_id, int player_id) {
 
     for(auto & edge: this->connections.at(tile_id)) {
         
-        if(this->tiles[edge.second] != nullptr) {
+        if(this->tiles[edge.second]->isFilled()) {
             // Check for pair tiles
             if(this->tiles[edge.first]->getCard() == this->tiles[edge.second]->getCard()) {
                 this->tiles[edge.first]->setPlayer(player_id);
@@ -137,20 +151,52 @@ int Map::checkAdjacent(int tile_id, int player_id) {
                 // Iterate through vector to add score equal to length of each path
                 for(auto & path: paths) {
                     score += path.getLength();
+                    for(auto & id: path.getTiles()) {
+                        this->tiles[id]->setPlayer(player_id);
+                    }
                 }
 
             }
             
         }
         
-
-        
-
     }
 
     return score;
     
-    
+}
+
+bool Map::mapFilled() {
+    for(int i = 0; i < this->size; ++i) {
+        if(!this->tiles[i]->isFilled()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void Map::placeCard(int tileLoc, Card * card, int player) {
+    this->tiles[tileLoc]->setCard(card, player);
+}
+
+void Map::logMap() {
+    // In progress, logs the information about the map
+    std::cout << "-----MAP SUMMARY-----" << std::endl;
+    std::cout << "Map ID: " << this->id << std::endl;
+    std::cout << "Map size: " << this->size << std::endl;
+    std::cout << "Tiles:" << std::endl;
+    for(int i = 0; i < this->size; ++i) {
+        Tile* cur = this->tiles[i];
+        std::cout << "\tTile " << cur->getId();
+        if(cur->isFilled()) {
+            std::cout << " (Filled)" <<std::endl;
+        }
+        else {
+            std::cout << " (Empty)" << std::endl;
+        }
+        
+    }
+
 }
 
 Map::~Map() {
