@@ -21,6 +21,7 @@ public:
     void setPlayer(int player);
     bool isFilled();
     int getId();
+    int getPlayer();
     Phases getCard();
     ~Tile();
 

@@ -46,8 +46,14 @@ int main() {
     std::vector<std::pair<int, int> > connections{std::pair{0,1}, std::pair{0,2}, std::pair{1,3}, std::pair{2,3}};
 
     Map mymap{0, 4, connections}; 
+
+    Deck deck{1,1};
+    deck.shuffle();
+    Card* draw = deck.deal();
     
+    mymap.placeCard(1, draw, 1);
     
+    mymap.logMap();
 
     return 0;
 }

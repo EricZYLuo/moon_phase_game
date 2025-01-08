@@ -26,6 +26,10 @@ int Tile::getId() {
     return this->id;
 }
 
+int Tile::getPlayer() {
+    return this->owned;
+}
+
 Phases Tile::getCard() {
     if(this->filled) {
         return this->filled->getPhase();
@@ -190,12 +194,21 @@ void Map::logMap() {
         std::cout << "\tTile " << cur->getId();
         if(cur->isFilled()) {
             std::cout << " (Filled)" <<std::endl;
+            std::cout << "\tOwner: Player " << cur->getPlayer() << std::endl;
+            std::cout << "\tCard: " << cur->getCard() << std::endl;
         }
         else {
             std::cout << " (Empty)" << std::endl;
+            std::cout << "\tOwner: None" << std::endl;
         }
+        std::cout << "\tConnected to tiles ";
+        for(auto & edge: connections.at(cur->getId())) {
+            std::cout << edge.second << " ";
+        }
+        std::cout << std::endl;
         
     }
+    std::cout << "-----SUMMARY COMPLETE-----" << std::endl;
 
 }
 
