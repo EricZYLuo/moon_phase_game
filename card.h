@@ -12,6 +12,7 @@ class Card {
 
 public:
     Card();
+    Card(const Card & other);
     Card(int id, Phases phase);
     Phases getPhase();
     // Temp for console output, eventually implement/replace drawCard

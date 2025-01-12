@@ -7,6 +7,8 @@
 
 Card::Card(): id{-1}, phase{new_moon} {}
 
+Card::Card(const Card & other): id{other.id}, phase{other.phase} {}
+
 Card::Card(int id, Phases phase): id{id}, phase{phase} {}
 
 Phases Card::getPhase() {

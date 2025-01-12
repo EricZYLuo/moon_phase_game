@@ -47,11 +47,15 @@ int main() {
 
     Map mymap{0, 4, connections}; 
 
-    Deck deck{1,1};
-    deck.shuffle();
-    Card* draw = deck.deal();
+    // Deck deck{1,1};
+    // deck.shuffle();
+    Card* firstCard = new Card(1, Phases::new_moon);
+    Card* secondCard = new Card(2, Phases::waxing_crescent);
+    Card* thirdCard = new Card(3, Phases::first_quarter);
     
-    mymap.placeCard(1, draw, 1);
+    mymap.placeCard(0, firstCard, 1);
+    mymap.placeCard(1, secondCard, 1);
+    mymap.placeCard(3, thirdCard, 1);
     
     mymap.logMap();
 

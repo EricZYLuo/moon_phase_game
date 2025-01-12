@@ -111,7 +111,7 @@ void Map::pathCheck(Path basePath, std::vector<Path>& pathList, int direction) {
 }
 
 int Map::checkAdjacent(int tile_id, int player_id) {
-    if(this->tiles[tile_id]->isFilled()) {
+    if(!this->tiles[tile_id]->isFilled()) {
         std::cerr << "Tried to check empty tile." << std::endl;
         return -1;
     }
@@ -181,6 +181,9 @@ bool Map::mapFilled() {
 
 void Map::placeCard(int tileLoc, Card * card, int player) {
     this->tiles[tileLoc]->setCard(card, player);
+    // Temporary functionality to determine scoring
+    int score = this->checkAdjacent(tileLoc, player);
+    std::cout << "Player " << player << " scored " << score << " points!" << std::endl;
 }
 
 void Map::logMap() {
